@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hustle City</title><link href="https://fonts.googleapis.com/css2?family=Bowlby+One&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f4c3a;--card:#fff;--ink:#17201f;--mut:#5d6d6a;--y:#ffc933;--r:#e63b2e;--g:#2fb36b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--card:#1d2f2b;--ink:#f3f1e8;--mut:#9db0ab}}
+:root[data-theme=dark]{--card:#1d2f2b;--ink:#f3f1e8;--mut:#9db0ab}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}body{height:100%;margin:0;background:var(--bg);color:#fff;font:600 14px system-ui,sans-serif;overflow:hidden;touch-action:none}
+#app{height:100%;display:flex;flex-direction:column}
+#hud{padding:6px 8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#0a3528}
+.pill{background:#0006;border-radius:20px;padding:6px 10px;white-space:nowrap;font-weight:800}
+.money{background:var(--y);color:#17201f;font:16px 'Bowlby One',Impact,sans-serif}
+.lo{color:#ff8a7e}.bar{height:7px;border-radius:5px;background:#0006;overflow:hidden;margin-top:3px}.bar i{display:block;height:100%;background:var(--y)}
+button{font:inherit;cursor:pointer}
+.btn{min-height:44px;border:0;border-radius:12px;padding:10px 16px;background:var(--y);color:#17201f;font-weight:900;font-size:15px;box-shadow:0 4px 0 #b88a00}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #b88a00}.btn.g{background:var(--g);color:#fff;box-shadow:0 4px 0 #1b7a47}.btn.w{background:#fff;color:#17201f;box-shadow:0 4px 0 #aab}.btn.r{background:var(--r);color:#fff;box-shadow:0 4px 0 #9b2118}.btn[disabled]{opacity:.45}.btn.s{min-height:44px;padding:6px 10px;font-size:13px}
+#stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
+canvas{display:block;border-radius:10px;background:#24413a}
+#hint{position:absolute;top:4px;left:50%;transform:translateX(-50%);background:#000b;padding:6px 12px;border-radius:14px;max-width:94%;text-align:center;font-size:13px;pointer-events:none}
+#toasts{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px;align-items:center;pointer-events:none;width:92%;z-index:20}
+.toast{background:var(--y);color:#17201f;padding:7px 12px;border-radius:12px;font-weight:800;text-align:center;font-size:13px;animation:pop .25s}@keyframes pop{from{transform:scale(.8);opacity:0}}
+#joy{position:absolute;left:12px;bottom:12px;width:128px;height:128px;border-radius:50%;background:#ffffff22;border:2px solid #fff5;touch-action:none}
+#knob{position:absolute;left:44px;top:44px;width:40px;height:40px;border-radius:50%;background:#fffd;pointer-events:none}
+#act{position:absolute;right:12px;bottom:16px;width:100px;height:100px;border-radius:50%;background:var(--r);color:#fff;border:4px solid #fff;font:12px 'Bowlby One',Impact,sans-serif;box-shadow:0 5px 0 #7d1b14;touch-action:none;padding:4px}
+#ov{position:fixed;inset:0;display:none;background:#0a3528f5;overflow-y:auto;overflow-x:hidden;z-index:9;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));touch-action:pan-y}
+.ttl{text-align:center;margin:6vh 0 22px}.ttl h1{font:15vw/.95 'Bowlby One',Impact,sans-serif;margin:14px 0 8px;color:var(--y);text-shadow:0 5px 0 #000a;letter-spacing:1px}.ttl p{font-size:18px;margin:0;color:#e8f5ee}
+.stripe{display:block;height:22px;background:repeating-linear-gradient(45deg,var(--y) 0 18px,#17201f 18px 36px);border-radius:4px}
+.col{display:flex;flex-direction:column;gap:12px;max-width:420px;margin:0 auto}
+.card{background:var(--card);color:var(--ink);border-radius:16px;padding:14px;margin:0 auto 12px;max-width:520px}.card h2,.card h3{margin:0 0 8px;font-family:'Bowlby One',Impact,sans-serif;font-weight:400}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #8883}.row:last-child{border:0}.mut{color:var(--mut);font-size:12px;font-weight:600}
+.pos{color:var(--g)}.neg{color:var(--r)}.lock{opacity:.55}
+.tabs{display:flex;gap:4px;max-width:520px;margin:0 auto 10px}.tabs button{flex:1;min-height:48px;border:0;border-radius:10px;background:#0006;color:#fff;font-size:10px;padding:2px}.tabs button.on{background:var(--y);color:#17201f}.tabs span{display:block;font-size:18px}
+.hdr{display:flex;justify-content:space-between;align-items:center;max-width:520px;margin:0 auto 10px}.btns{display:flex;gap:6px;flex-wrap:wrap}
+#rot{display:none;position:fixed;inset:0;z-index:50;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;font:24px 'Bowlby One',Impact,sans-serif;color:var(--y);padding:20px}
+#rot span{font-size:70px;display:block;animation:rt 1.8s ease-in-out infinite}@keyframes rt{50%{transform:rotate(-90deg)}}
+@media(orientation:portrait) and (pointer:coarse){#rot{display:flex}}
+@media(max-height:480px){#hud{padding:3px 6px;gap:4px}.pill{padding:3px 8px;font-size:11px}.money{font-size:13px}.btn.s{min-height:40px;padding:3px 8px}#lvl{min-width:120px!important}#joy{width:112px;height:112px}#knob{left:36px;top:36px}#act{width:88px;height:88px;font-size:11px}#hint{font-size:11px;padding:3px 8px}}
+input{-webkit-user-select:text;user-select:text;font:inherit;min-height:44px;width:100%;border-radius:10px;border:2px solid #8886;padding:8px;background:var(--card);color:var(--ink)}
+</style></head><body>
+<div id="app"><div id="hud"><span class="pill money" id="cash"></span><span class="pill" id="rep"></span><span class="pill" id="day"></span><button class="btn s" id="snd">🔊</button><button class="btn s" id="mn">☰</button>
+<div class="pill" id="lvl" style="flex:1;min-width:150px"></div><div class="pill" id="pf"></div><div class="pill" id="inv"></div></div>
+<div id="stage"><canvas id="cv"></canvas><div id="hint"></div><div id="joy"><div id="knob"></div></div><button id="act">GO</button></div></div>
+<div id="rot"><span>📱</span>Rotate your phone<div style="font:600 14px system-ui;color:#fff">Hustle City plays in landscape</div></div><div id="toasts"></div><div id="ov"></div>
+<script>
+/* ===== CORE ===== */
+const $=s=>document.querySelector(s),F=n=>'₦'+Math.round(n).toLocaleString('en-US'),R=(a,b)=>a+Math.random()*(b-a);
+const W=640,H=384,KEY='hustleCityV1',DL=120,dpr=Math.min(2,devicePixelRatio||1);
+let S,G={paused:1},SC=1,mute=false,AC,scr='';const esc=t=>String(t).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+function snd(f,d=.12,t='square',v=.05,s=0){if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime;o.type=t;o.frequency.value=f;if(s)o.frequency.linearRampToValueAtTime(f+s,n+d);g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(n+d)}catch(e){}}
+const tune=(a,t='square')=>a.forEach((f,i)=>setTimeout(()=>snd(f,.14,t),i*110));
+function toast(t,ms=2400){const d=document.createElement('div');d.className='toast';d.textContent=t;const b=$('#toasts');b.append(d);while(b.children.length>3)b.firstChild.remove();setTimeout(()=>d.remove(),ms)}
+/* ===== BUSINESS REGISTRY (add new businesses here) ===== */
+const BIZ=[{id:'food',e:'🍔',n:'Food Stand',cost:10000,diff:'Easy ★☆☆',profit:25000,d:'Cook burgers, serve hungry Lagos crowds.',on:1},
+{id:'cloth',e:'👕',n:'Clothing Shop',cost:80000,diff:'Medium ★★☆',profit:40000,d:'Stock trendy fits for every budget.'},
+{id:'phone',e:'📱',n:'Phone Shop',cost:150000,diff:'Hard ★★★',profit:70000,d:'Sell phones, repair screens, haggle.'},
+{id:'barber',e:'💈',n:'Barbershop',cost:40000,diff:'Easy ★☆☆',profit:20000,d:'Fresh cuts, loyal regulars.'},
+{id:'wash',e:'🚗',n:'Car Wash',cost:60000,diff:'Medium ★★☆',profit:30000,d:'Soap, shine and happy drivers.'},
+{id:'laundry',e:'🧼',n:'Laundry',cost:50000,diff:'Easy ★☆☆',profit:22000,d:'Wash, fold, deliver on time.'}];
+/* ===== FOOD STAND MODULE ===== */
+const ING={bun:['🍞','Buns',150,'are'],meat:['🥩','Meat',400,'is'],lettuce:['🥬','Lettuce',80,'is'],sauce:['🧴','Sauce',60,'is'],drink:['🥤','Drinks',120,'are']};
+const SUP=[{id:'local',n:'Local',e:'🛺',mult:1,qty:10,wait:25,lv:1},{id:'prem',n:'Premium',e:'🚚',mult:1.6,qty:20,wait:6,lv:1},{id:'whole',n:'Wholesale',e:'🏭',mult:.85,qty:40,wait:15,lv:3}];
+const LV=[0,100,300,700,1500],NM=['Food Stand','Small Shop','Popular Shop','Restaurant','Premium Restaurant'];
+const UP=[{id:'tables',c:'Shop',n:'🪑 More tables',$:20000,lv:1,fx:{slots:1},d:'+1 customer spot'},
+{id:'decor',c:'Shop',n:'🎨 Better decoration',$:40000,lv:1,fx:{spawn:.15},d:'+15% customers'},
+{id:'kitchen',c:'Shop',n:'🍳 Better kitchen',$:60000,lv:2,fx:{price:.05},d:'Sell price +5%'},
+{id:'space',c:'Shop',n:'🏠 Bigger space',$:250000,lv:3,fx:{slots:2},d:'Upgrade location: +2 spots'},
+{id:'stove',c:'Equipment',n:'🔥 Better stove',$:80000,lv:1,fx:{cook:.2,sweet:.03},d:'Cooking speed +20%'},
+{id:'grill2',c:'Equipment',n:'⚡ Fast grill',$:150000,lv:3,fx:{cook:.2,sweet:.03},d:'Cooking speed +20%'},
+{id:'fridge',c:'Equipment',n:'🧊 Larger fridge',$:30000,lv:1,fx:{cap:3},d:'Cook can stock 3 more burgers'},
+{id:'flyers',c:'Marketing',n:'📄 Flyers',$:10000,lv:1,fx:{spawn:.1},d:'+10% customers'},
+{id:'social',c:'Marketing',n:'📱 Social media',$:35000,lv:2,fx:{spawn:.2},d:'+20% customers'},
+{id:'ads',c:'Marketing',n:'📻 Local advertising',$:90000,lv:3,fx:{spawn:.3},d:'+30% customers'}];
+const UPD=Object.fromEntries(UP.map(u=>[u.id,u]));
+const SF={cook:{e:'👨‍🍳',n:'Cook',s:15000,lv:2,d:'Cooks burgers for you'},cashier:{e:'👩‍💼',n:'Cashier',s:12000,lv:2,d:'Serves waiting customers'},cleaner:{e:'🧹',n:'Cleaner',s:8000,lv:3,d:'Keeps the shop clean'}};
+const TY={pat:{e:'😊',p:50,m:1,r:1},imp:{e:'😡',p:22,m:1,r:1},big:{e:'💰',p:38,m:1.5,r:1},vip:{e:'⭐',p:40,m:2,r:3},bar:{e:'🤑',p:35,m:.8,r:1}};
+const EV={fest:['📢 Food Festival!','Customer traffic +50% today.'],out:['⚡ Power Outage','Cooking is slower for 60 seconds.'],disc:['📦 Supplier Discount','Ingredients are 20% cheaper today.'],inf:['⭐ Food Influencer','A popular customer is visiting. Serve them well!']};
+const MS=[['sale','🏆 First Sale',s=>s.sold>=1,2000],['k100','🏆 ₦100K Revenue',s=>s.revT>=1e5,5000],['c100','🏆 100 Customers',s=>s.served>=100,10000],['l5','🏆 Level 5 Business',s=>s.lv>=5,50000],['emp','🏆 First Employee',s=>Object.keys(s.staff).length>0,5000],['mil','🏆 First Million',s=>s.cash>=1e6,100000]];
+const ST=[{k:'shelf',r:[24,32,64,40],l:'Ingredients',e:'🧺',c:'#c9822b'},{k:'grill',r:[128,32,64,40],l:'Grill',e:'🔥',c:'#555'},{k:'asm',r:[232,32,64,40],l:'Assemble',e:'🍔',c:'#9aa7a5'},{k:'fridge',r:[336,32,56,40],l:'Fridge',e:'🧊',c:'#cfe8f5'},{k:'sup',r:[440,32,64,40],l:'Supply desk',e:'📞',c:'#7a5cc7'},{k:'board',r:[540,32,64,40],l:'Upgrades',e:'📋',c:'#e0a800'},{k:'trash',r:[24,120,28,32],l:'Trash/clean',e:'🗑️',c:'#4a6670'},{k:'ctr',r:[96,160,512,32],l:'Serve',e:'💵',c:'#8a5a2b'}];
+const SOLID=[[0,0,W,32],[0,0,16,H],[W-16,0,16,H],[0,H-16,288,16],[352,H-16,288,16],...ST.map(s=>s.r),[24,260,56,36],[560,260,56,36]];
+const newS=()=>({cash:40000,xp:0,lv:1,inv:{bun:12,meat:10,lettuce:15,sauce:12,drink:20},rep:50,up:[],staff:{},day:1,served:0,sold:0,revT:0,ms:[],pend:[],bail:0,name:''});
+const st=k=>S.up.reduce((a,id)=>a+(UPD[id].fx[k]||0),0),ev=id=>G.evId==id&&G.evOn;
+const price=(k,s)=>Math.round(ING[k][2]*s.mult*(ev('disc')?.8:1)*s.qty);
+const QM={perfect:1.2,good:1,under:.7};
+const TB=[[24,260],[560,260],[24,320],[560,320]],seatPos=i=>[TB[i>>1][0]+14+(i&1)*28,TB[i>>1][1]+16],nseat=()=>(2+(st('slots')>=1)+(st('slots')>=3))*2;
+function addXp(n){S.xp+=n;let l=1;LV.forEach((t,i)=>{if(S.xp>=t)l=i+1});if(l>S.lv){S.lv=l;toast('🎉 LEVEL UP! '+NM[l-1]+' — new upgrades unlocked',3500);tune([523,659,784,1046])}}
+function fx(x,y,t,c='#fff'){G.fx.push({x,y,t,c,a:1})}
+/* ===== DAY FLOW ===== */
+function startDay(){const ids=Object.keys(EV),r=G.ready||0;G={c:[],t:DL,el:0,sp:1.5,ready:r,h:{kit:0,patty:null,burger:null,drink:0},cook:null,p:{x:320,y:110,w:0},fx:[],dirt:G.dirt||0,d:{rev:0,exp:0,ing:0,fix:0,cust:0,happy:0,rep0:S.rep},warn:{},evId:Math.random()<.65?ids[Math.random()*4|0]:null,evOn:0,tab:'sup',ck:0,cs:0,ot:0,hs:0,paused:0,outT:0};G.evAt=G.evId=='disc'?1:R(12,55);hide();toast(S.day==1?'🍔 Your first customer is on the way!':'☀️ Day '+S.day+' — open for business!')}
+function endDay(){G.paused=1;G.between=1;const d=G.d;d.fix=5000+Object.keys(S.staff).reduce((a,k)=>a+SF[k].s,0);d.exp=d.ing+d.fix;S.cash=Math.max(0,S.cash-d.fix);if(S.cash<10000){S.cash+=20000;S.bail=S.day;d.aid=20000}d.repd=Math.round(S.rep-d.rep0);localStorage.setItem(KEY,JSON.stringify(S));cloudPush();tune([392,330,262],'triangle');showSum()}
+function showSum(){const d=G.d,p=d.rev-d.exp;show(`<div class=ttl style="margin:2vh 0 14px"><h1 style="font-size:9vw">DAY COMPLETE</h1></div><div class=card><h3>Day ${S.day}</h3><div class=row><span>Revenue</span><b>${F(d.rev)}</b></div><div class=row><span>Ingredients</span><b>${F(d.ing)}</b></div><div class=row><span>Rent, power & salaries</span><b>${F(d.fix)}</b></div><div class=row><span>Expenses</span><b>${F(d.exp)}</b></div><div class=row><span>Profit</span><b class="${p<0?'neg':'pos'}">${F(p)}</b></div><div class=mut>Revenue − Expenses = Profit</div>${d.aid?'<div class=row><span>🤝 Family support</span><b class=pos>+'+F(d.aid)+'</b></div>':''}<div class=row><span>Customers served</span><b>${d.cust}</b></div><div class=row><span>Happy customers</span><b>${d.happy}</b></div><div class=row><span>Reputation</span><b>${d.repd>=0?'+':''}${d.repd}</b></div></div><div class=col><button class="btn w" data-a=shop>🛠 SUPPLIES & UPGRADES</button><button class="btn w" data-a=save>💾 SAVE GAME</button><button class=btn data-a=next>START NEXT DAY</button></div>`)}
+/* ===== CLOUD (Claude db capability: signed-in viewers) ===== */
+let CL=null,LB=null,cloudSave=null;
+async function initCloud(){try{if(!window.claude||!claude.use)return;const db=await claude.use('db'),u=await claude.use('user');if(!db||!u)return;const id=await u.id();if(!id)return;CL={db,id};const d=await db.doc('data/users/'+id+'/save').get();if(d.exists)cloudSave=d.data();if(scr=='title')title()}catch(e){}}
+async function cloudPush(){if(!CL)return 0;try{await CL.db.doc('data/users/'+CL.id+'/save').set({save:S,t:Date.now()});if(S.name)await CL.db.doc('scores/'+CL.id).set({name:S.name,revT:Math.round(S.revT),lv:S.lv,day:S.day,served:S.served,t:Date.now()});return 1}catch(e){toast('☁️ Cloud save needs Contributor access');return 0}}
+async function fetchLB(){if(!CL)return;try{const q=await CL.db.collection('scores').orderBy('revT','desc').limit(10).get();LB=q.docs.map(d=>d.data())}catch(e){LB=[]}if(G.tab=='lb'&&G.paused&&$('#ov').style.display=='block'&&!document.activeElement.matches('input'))menu()}
+/* ===== SCREENS ===== */
+function show(h){const o=$('#ov'),y=o.scrollTop;o.innerHTML=h;o.style.display='block';o.scrollTop=y;G.paused=1;scr=''}
+function hide(){$('#ov').style.display='none';G.paused=0}
+function title(){G={paused:1};const sv=localStorage.getItem(KEY);show(`<div class=ttl><i class=stripe></i><h1>HUSTLE<br>CITY</h1><p>Start small. Build big.</p></div><div class=col><button class=btn data-a=play>PLAY</button>${sv?'<button class="btn g" data-a=cont>CONTINUE</button>':''}${cloudSave?'<button class="btn g" data-a=ccont>☁️ CONTINUE CLOUD SAVE</button>':''}<button class="btn w" data-a=how>HOW TO PLAY</button></div>`);scr='title'}
+function how(){show(`<div class=card><h2>How to play</h2><p>🧺 <b>Grab ingredients</b> from the shelf.<br>🔥 <b>Grill</b> the meat — press INTERACT when the pointer is in the <b>green</b>.<br>🍔 <b>Assemble</b> at the prep station.<br>🥤 Grab a <b>drink</b> from the fridge.<br>💵 <b>Serve</b> at the counter to get paid. Customers then sit down, eat and leave.</p><p>📞 Restock at the Supply desk. 📋 Buy upgrades and hire staff at the board. Keep customers happy to raise your ⭐ reputation.</p><p class=mut>Move: WASD / arrows / joystick. Interact: E, Space or the red button.</p></div><div class=col><button class=btn data-a=title>BACK</button></div>`)}
+function pick(){S=newS();show(`<div class=ttl style="margin:2vh 0 12px"><h1 style="font-size:8vw">CHOOSE YOUR FIRST BUSINESS</h1><p>💰 ${F(50000)} starting capital</p></div>${BIZ.map(b=>`<div class="card ${b.on?'':'lock'}"><h3>${b.e} ${b.n}</h3><div class=mut>${b.d}</div><div class=row><span>Startup cost</span><b>${F(b.cost)}</b></div><div class=row><span>Difficulty</span><b>${b.diff}</b></div><div class=row><span>Avg profit</span><b>${F(b.profit)}/day</b></div>${b.on?'<button class="btn g" style="width:100%;margin-top:6px" data-a=open>OPEN FOOD STAND</button>':'<b>🔒 Coming soon</b>'}</div>`).join('')}`)}
+const TABS=[['sup','📦','Supply'],['up','🔧','Upgrade'],['st','👥','Staff'],['go','🏆','Goals'],['map','🗺️','City'],['lb','🥇','Ranks'],['set','⚙️','Menu']];
+function menu(t){G.tab=t||G.tab;if(G.tab!='set')G.rc=0;let h=`<div class=hdr><b class="pill money">💰 ${F(S.cash)}</b><button class="btn s" data-a=close>✕ CLOSE</button></div><div class=tabs>${TABS.map(x=>`<button class="${x[0]==G.tab?'on':''}" data-a="tab|${x[0]}"><span>${x[1]}</span>${x[2]}</button>`).join('')}</div>`;
+if(G.tab=='sup'){h+=(S.cash<10000?`<div class=card><h3>🤝 Running low on cash?</h3><button class="btn g" style="width:100%" ${S.bail==S.day?'disabled':''} data-a=aid>${S.bail==S.day?'Already used today':'Ask family for '+F(20000)}</button><div class=mut>Available once a day when cash is under ${F(10000)}.</div></div>`:'')+`<div class=card><h3>Suppliers</h3>${Object.keys(ING).map(k=>`<div class=row style="flex-wrap:wrap"><b>${ING[k][0]} ${ING[k][1]}: ${S.inv[k]}</b><span class=btns>${SUP.map(s=>{const p=price(k,s),lk=S.lv<s.lv;return `<button class="btn s" ${lk||S.cash<p?'disabled':''} data-a="buy|${k}|${s.id}">${lk?'🔒 Lv'+s.lv:s.e+' +'+s.qty+' '+F(p)}</button>`}).join('')}</span></div>`).join('')}<div class=mut>🛺 Local: cheap, ${SUP[0].wait}s delivery · 🚚 Premium: bigger packs, ${SUP[1].wait}s, +rep · 🏭 Wholesale (Lv3): best price</div></div>${S.pend.length?`<div class=card><h3>On the way</h3>${S.pend.map(p=>`<div class=row><span>${ING[p.k][0]} +${p.q}</span><b>${Math.ceil(p.t)}s</b></div>`).join('')}<div class=mut>Deliveries arrive while the day is running.</div></div>`:''}`}
+if(G.tab=='up'){h+=['Shop','Equipment','Marketing'].map(c=>`<div class=card><h3>${c}</h3>${UP.filter(u=>u.c==c).map(u=>{const o=S.up.includes(u.id),lk=S.lv<u.lv;return `<div class=row><span><b>${u.n}</b><br><span class=mut>${u.d}</span></span><button class="btn s" ${o||lk||S.cash<u.$?'disabled':''} data-a="up|${u.id}">${o?'✔ Owned':lk?'🔒 Lv'+u.lv:F(u.$)}</button></div>`}).join('')}</div>`).join('')}
+if(G.tab=='st'){h+=`<div class=card><h3>Staff</h3>${Object.keys(SF).map(k=>{const f=SF[k],o=S.staff[k],lk=S.lv<f.lv;return `<div class=row><span><b>${f.e} ${f.n}</b><br><span class=mut>${f.d} · ${F(f.s)}/day</span></span><button class="btn s" ${o||lk||S.cash<f.s?'disabled':''} data-a="hire|${k}">${o?'✔ Hired':lk?'🔒 Lv'+f.lv:'Hire '+F(f.s)}</button></div>`}).join('')}<div class=mut>Salaries are paid at the end of each day.</div></div>`}
+if(G.tab=='go'){h+=`<div class=card><h3>Progress</h3><div class=row><span>Level</span><b>${S.lv} ${NM[S.lv-1]}</b></div><div class=row><span>⭐ Reputation</span><b>${Math.round(S.rep)}/100</b></div><div class=row><span>XP</span><b>${S.xp}</b></div><div class=row><span>Customers</span><b>${S.served}</b></div><div class=row><span>Businesses owned</span><b>1</b></div></div><div class=card><h3>Milestones</h3>${MS.map(m=>`<div class=row><span>${m[1]}</span><b>${S.ms.includes(m[0])?'✔':'+'+F(m[3])}</b></div>`).join('')}<div class="row lock"><span>🏆 Second Branch</span><b>🔒 Coming soon</b></div></div>`}
+if(G.tab=='map'){h+=S.sold<1?`<div class=card><h3>City map</h3>Make your first sale to unlock the city.</div>`:`<div class=card><h3>City map</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['🏠 Home','save'],['🍔 Food Stand','close'],['👕 Clothing Shop 🔒'],['📱 Phone Shop 🔒'],['💈 Barbershop 🔒'],['🚗 Car Wash 🔒'],['🏦 Bank','tab|go'],['📦 Supplier','tab|sup']].map(l=>`<button class="btn w ${l[1]?'':'lock'}" data-a="${l[1]||'soon'}">${l[0]}</button>`).join('')}</div><div class=mut style="margin-top:8px">Home saves your game. Bank shows milestones.</div></div>`}
+if(G.tab=='lb'){h+=CL?`<div class=card><h3>Leaderboard</h3><div class=mut>Ranked by total revenue</div>${LB?(LB.map((e,i)=>`<div class=row><span>${i+1}. <b>${esc(e.name)}</b> <span class=mut>Lv${e.lv} · Day ${e.day}</span></span><b>${F(e.revT)}</b></div>`).join('')||'<div class=mut>No scores yet. Be first!</div>'):'<div class=mut>Loading…</div>'}</div><div class=card><h3>Your name</h3><input id=nm maxlength=14 value="${esc(S.name||'')}" placeholder="Enter a name"><button class=btn style="width:100%;margin-top:8px" data-a=nm>SUBMIT SCORE</button></div>`:`<div class=card><h3>Leaderboard</h3>Sign in to claude.ai to use the leaderboard and cloud saves.</div>`}
+if(G.tab=='set'){h+=`<div class="card col"><button class=btn data-a=save>💾 SAVE GAME</button><button class="btn w" data-a=mute>${mute?'🔇 Sound off':'🔊 Sound on'}</button><button class="btn w" data-a=how2>HOW TO PLAY</button><button class="btn r" data-a=reset>${G.rc?'TAP AGAIN TO CONFIRM':'RESET GAME'}</button></div>`}
+show(h)}
+const lockL=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};const A={play(){lockL();pick()},title,how,open(){S.cash-=BIZ[0].cost;G={};startDay()},cont(){lockL();S=Object.assign(newS(),JSON.parse(localStorage.getItem(KEY)));G={};startDay()},
+close(){G.between?showSum():hide()},shop(){menu('sup')},next(){S.day++;startDay()},tab:t=>{menu(t);if(t=='lb')fetchLB()},nm(){const v=$('#nm').value.trim().slice(0,14);if(!v)return toast('Enter a name first');S.name=v;cloudPush().then(ok=>{if(ok){toast('🥇 Score submitted');fetchLB()}})},ccont(){lockL();S=Object.assign(newS(),cloudSave.save);G={};startDay()},how2(){how()},soon(){toast('🔒 Coming soon')},aid(){if(S.cash>=10000||S.bail==S.day)return;S.cash+=20000;S.bail=S.day;tune([523,659,784]);toast('🤝 Family sent '+F(20000)+'!');menu()},
+buy(k,id){const s=SUP.find(x=>x.id==id),p=price(k,s);if(S.cash<p)return;S.cash-=p;G.d&&(G.d.ing+=p,G.d.exp+=p);S.pend.push({k,q:s.qty,t:s.wait,s:id});snd(520,.08);menu()},
+up(id){const u=UPD[id];if(S.cash<u.$||S.up.includes(id))return;S.cash-=u.$;S.up.push(id);tune([440,554,659]);toast('✅ '+u.n+' — '+u.d);menu()},
+hire(k){const f=SF[k];if(S.cash<f.s||S.staff[k])return;S.cash-=f.s;S.staff[k]=1;tune([440,554,659]);toast('✅ Hired '+f.n);menu()},
+save(){localStorage.setItem(KEY,JSON.stringify(S));toast('💾 Game saved'+(CL?' · ☁️ syncing':''));cloudPush()},mute(){mute=!mute;$('#snd').textContent=mute?'🔇':'🔊';menu()},
+reset(){if(!G.rc){G.rc=1;menu()}else{localStorage.removeItem(KEY);cloudSave=null;if(CL)CL.db.doc('data/users/'+CL.id+'/save').delete().catch(()=>{});title()}}};
+$('#ov').onclick=e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const[a,p,q]=b.dataset.a.split('|');A[a]&&A[a](p,q)};
+$('#mn').onclick=()=>{if(G.c&&!G.between)menu('sup')};$('#snd').onclick=()=>{mute=!mute;$('#snd').textContent=mute?'🔇':'🔊'};
+/* ===== INPUT ===== */
+const KEYS={};onkeydown=e=>{const k=e.key.toLowerCase();KEYS[k]=1;if([' ','e','enter'].includes(k)&&!e.repeat){act();e.preventDefault()}if(k.startsWith('arrow'))e.preventDefault()};onkeyup=e=>KEYS[e.key.toLowerCase()]=0;
+let jx=0,jy=0,jp=null;const joy=$('#joy'),kn=$('#knob');
+function jm(e){const r=joy.getBoundingClientRect(),m0=r.width/2-8;let dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;const m=Math.hypot(dx,dy);if(m>m0){dx*=m0/m;dy*=m0/m}kn.style.transform=`translate(${dx}px,${dy}px)`;jx=Math.abs(dx)>6?dx/m0:0;jy=Math.abs(dy)>6?dy/m0:0}
+joy.onpointerdown=e=>{jp=e.pointerId;joy.setPointerCapture(e.pointerId);jm(e)};joy.onpointermove=e=>{if(e.pointerId==jp)jm(e)};joy.onpointerup=joy.onpointercancel=()=>{jp=null;jx=jy=0;kn.style.transform=''};
+$('#act').onpointerdown=e=>{e.preventDefault();act()};
+const cv=$('#cv'),cx=cv.getContext('2d');
+function fit(){const s=$('#stage');SC=Math.min(s.clientWidth/W,s.clientHeight/H);cv.style.width=W*SC+'px';cv.style.height=H*SC+'px';cv.width=Math.round(W*SC*dpr);cv.height=Math.round(H*SC*dpr)}
+addEventListener('resize',fit);
+/* ===== GAMEPLAY ===== */
+const hit=(x,y,r)=>x>r[0]-9&&x<r[0]+r[2]+9&&y>r[1]-9&&y<r[1]+r[3]+9;
+const blocked=(x,y)=>SOLID.some(r=>hit(x,y,r))||(st('slots')>=1&&hit(x,y,[24,320,56,36]))||(st('slots')>=3&&hit(x,y,[560,320,56,36]));
+function near(){let b=null,bd=26;const p=G.p;for(const s of ST){const[x,y,w,h]=s.r,d=Math.hypot(p.x-Math.max(x,Math.min(x+w,p.x)),p.y-Math.max(y,Math.min(y+h,p.y)));if(d<bd){bd=d;b=s}}return b}
+function stopCook(){const c=G.cook,sw=st('sweet'),a=.6-sw,b=.78+sw;let q=c.p<a?'under':c.p<=b?'perfect':c.p<=b+.07?'good':'burnt';G.cook=null;
+if(q=='burnt'){G.h.kit=0;S.rep=Math.max(0,S.rep-2);G.dirt=Math.min(100,G.dirt+5);fx(G.p.x,G.p.y-30,'🔥 Burnt!','#ff6a5e');snd(110,.35,'sawtooth',.08)}
+else{G.h.patty=q;fx(G.p.x,G.p.y-30,{perfect:'😋 Perfect!',good:'👍 Good',under:'😕 Undercooked'}[q],q=='perfect'?'#7dffa8':'#ffd76a');tune(q=='perfect'?[660,880]:[440],'triangle');if(q=='perfect')S.rep=Math.min(100,S.rep+.5)}}
+function act(){if(G.paused||!G.c)return;const s=near();if(!s)return;const h=G.h,i=S.inv;
+if(s.k=='shelf'){if(h.kit||h.patty||h.burger)return toast('Hands full — finish your burger first');const m=['bun','meat','lettuce','sauce'].find(k=>i[k]<1);if(m)return toast('⚠️ Out of '+ING[m][1].toLowerCase()+'! Restock at the supply desk.'),snd(110,.2,'sawtooth');['bun','meat','lettuce','sauce'].forEach(k=>i[k]--);h.kit=1;snd(400,.07)}
+else if(s.k=='grill'){if(G.cook)stopCook();else if(h.kit&&!h.patty){G.cook={p:0};snd(220,.15,'sawtooth')}else toast(h.patty?'Assemble it first':'Grab ingredients first')}
+else if(s.k=='asm'){if(h.patty&&!h.burger){h.burger=h.patty;h.patty=null;h.kit=0;snd(600,.1,'triangle')}else toast('Cook the meat first')}
+else if(s.k=='fridge'){if(h.drink)return;if(i.drink<1)return toast('⚠️ Drinks are out!');i.drink--;h.drink=1;snd(700,.06)}
+else if(s.k=='sup')menu('sup');else if(s.k=='board')menu('up');
+else if(s.k=='trash'){if(h.kit||h.patty||h.burger||h.drink){G.h={kit:0,patty:null,burger:null,drink:0};G.cook=null;snd(150,.1)}else{G.dirt=Math.max(0,G.dirt-30);fx(G.p.x,G.p.y-30,'✨ Cleaned');snd(900,.08,'sine')}}
+else if(s.k=='ctr'){let any=0;for(const c of G.c.filter(c=>c.st=='wait'))any|=serve(c,true);if(!any)toast(G.c.some(c=>c.st=='wait')?'Bring a burger 🍔 or drink 🥤':'No customers waiting')}}
+function serve(c,hand){let did=0;const h=G.h;
+while(c.gb<c.b){let q;if(hand&&h.burger){q=h.burger;h.burger=null}else if(G.ready>0){G.ready--;q='good'}else break;c.gb++;did=1;c.val+=1800*QM[q];if(q=='perfect')c.q++;if(q=='under')c.bad=1}
+while(c.gd<c.d){if(hand&&h.drink)h.drink=0;else if(!hand&&S.inv.drink>0)S.inv.drink--;else break;c.gd++;did=1;c.val+=500}
+if(did)snd(500,.06);if(c.gb>=c.b&&c.gd>=c.d)pay(c);return did}
+function pay(c){const T=TY[c.ty],p=c.val*(1+st('price'))*T.m,f=c.pat/c.max,happy=f>.3&&!c.bad;S.cash+=p;G.d.rev+=p;S.revT+=p;S.served++;S.sold++;G.d.cust++;if(happy)G.d.happy++;
+S.rep=Math.max(0,Math.min(100,S.rep+(f>.5?1:.4)*T.r+c.q*.5+(c.inf?5:0)-(c.bad?1:0)-(G.dirt>60?.6:0)));addXp(10*(c.ty=='vip'?2:1)+c.q*2);G.dirt=Math.min(100,G.dirt+4);
+fx(c.x,c.y-50,'+'+F(p),'#7dffa8');c.s=-9;let sd=-1;for(let i=0;i<nseat();i++)if(!G.c.some(o=>o.seat===i)){sd=i;break}if(sd>=0){c.seat=sd;c.st='seat'}else c.st='out';snd(880,.07);setTimeout(()=>snd(1320,.15),80)}
+function spawn(vip){const n=Math.min(8,4+st('slots'));let s=-1;for(let i=0;i<n;i++)if(!G.c.some(c=>c.s==i)){s=i;break}if(s<0)return;
+const pool=['pat','pat','imp','bar'];if(S.lv>1)pool.push('big','vip');const ty=vip?'vip':pool[Math.random()*pool.length|0],p=TY[ty].p*R(.85,1.15)*1.8;
+G.c.push({x:R(300,340),y:H+10,s,ty,pat:p,max:p,b:ty=='big'?2:1,d:ty=='big'||Math.random()<.5?1:0,gb:0,gd:0,val:0,q:0,st:'in',hue:R(0,360)|0,inf:vip});snd(660,.12,'sine');if(ty=='vip'&&!vip)toast('⭐ VIP customer arrived!')}
+function update(dt){G.el+=dt;if(G.t>0)G.t-=dt;else{G.ot+=dt;if(!G.c.length||G.ot>20)return endDay()}
+if(G.evId&&!G.evOn&&G.el>=G.evAt){G.evOn=1;toast(EV[G.evId].join(' '),4500);tune([523,659]);if(G.evId=='out')G.outT=60;if(G.evId=='inf')spawn(1)}
+if(G.outT>0)G.outT-=dt;
+G.sp-=dt;if(G.sp<=0&&G.t>0){spawn();G.sp=R(.8,1.2)*9/((.6+S.rep/100*.9)*(1+st('spawn'))*(ev('fest')?1.5:1))}
+const p=G.p;let dx=(KEYS.d||KEYS.arrowright?1:0)-(KEYS.a||KEYS.arrowleft?1:0)+jx,dy=(KEYS.s||KEYS.arrowdown?1:0)-(KEYS.w||KEYS.arrowup?1:0)+jy;const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m}
+if(m>.05){const v=130*dt;if(!blocked(p.x+dx*v,p.y))p.x+=dx*v;if(!blocked(p.x,p.y+dy*v))p.y+=dy*v;p.w+=dt;if(dx)p.f=dx>0?1:-1}else p.w=0;
+if(G.cook){G.cook.p+=dt/(3.4/(1+st('cook'))*(G.outT>0?1.7:1));if(G.cook.p>=1){G.cook.p=1;stopCook()}}
+for(const c of G.c){const sp=c.st=='seat'||c.st=='eat'?seatPos(c.seat):null,tx=c.st=='out'?320:sp?sp[0]:120+c.s*56,ty=c.st=='out'?H+20:sp?sp[1]:214,ddx=tx-c.x,ddy=ty-c.y,d=Math.hypot(ddx,ddy);if(d>3&&c.st!='eat'){c.x+=ddx/d*75*dt;c.y+=ddy/d*75*dt;c.wk=(c.wk||0)+dt}else if(c.st=='in')c.st='wait';else if(c.st=='seat'){c.st='eat';c.et=R(6,10)}if(c.st=='eat'){c.et-=dt;c.wk=0;if(c.et<=0){c.st='out';c.seat=undefined;G.dirt=Math.min(100,G.dirt+3);fx(c.x,c.y-40,'😋 Thanks!','#ffd76a')}}
+if(c.st=='wait'){c.pat-=dt;if(c.pat<=0){c.st='out';c.s=-9;S.rep=Math.max(0,S.rep-3);toast('😡 Customer left!');snd(150,.25,'sawtooth')}}}
+G.c=G.c.filter(c=>!(c.st=='out'&&c.y>H+5));
+if(S.staff.cook){G.ck+=dt;if(G.ck>9/(1+st('cook'))){G.ck=0;if(G.ready<3+st('cap')&&['bun','meat','lettuce','sauce'].every(k=>S.inv[k]>0)){['bun','meat','lettuce','sauce'].forEach(k=>S.inv[k]--);G.ready++;snd(300,.1,'sawtooth')}}}
+if(S.staff.cashier){G.cs+=dt;if(G.cs>2){G.cs=0;G.c.filter(c=>c.st=='wait').forEach(c=>serve(c,false))}}
+if(S.staff.cleaner)G.dirt=Math.max(0,G.dirt-1.2*dt);
+S.pend.forEach(q=>q.t-=dt);S.pend=S.pend.filter(q=>{if(q.t>0)return 1;S.inv[q.k]+=q.q;toast('📦 '+q.q+' '+ING[q.k][1].toLowerCase()+' delivered');if(q.s=='prem')S.rep=Math.min(100,S.rep+.5);snd(600,.1,'triangle');return 0});
+G.fx.forEach(f=>{f.y-=18*dt;f.a-=dt*.6});G.fx=G.fx.filter(f=>f.a>0);
+G.hs-=dt;if(G.hs<=0){G.hs=.4;for(const k in ING){if(S.inv[k]<=3){if(!G.warn[k]){G.warn[k]=1;toast('⚠️ '+ING[k][1]+' '+ING[k][3]+' running low.')}}else G.warn[k]=0}
+for(const m of MS)if(!S.ms.includes(m[0])&&m[2](S)){S.ms.push(m[0]);S.cash+=m[3];toast(m[1]+' +'+F(m[3]),3500);tune([523,659,784])}if(S.cash<5000&&!G.aw&&S.bail!=S.day){G.aw=1;toast('💸 Low on cash! Visit the supply desk for help.')}hudUpdate()}}
+function hint(){const h=G.h,n=G.c.filter(c=>c.st=='wait');if(G.cook)return '🔥 Press INTERACT when the pointer is in the GREEN';if((h.burger||h.drink)&&n.length)return '💵 Walk to the counter and serve!';if(h.patty)return '🍔 Assemble at the prep station';if(h.kit)return '🔥 Cook the meat at the grill';
+if(n.length)return n.some(c=>c.d>c.gd)&&!n.some(c=>c.b>c.gb)?'🥤 Grab a drink from the fridge':G.ready?'💵 Serve ready burgers at the counter':'🧺 Grab ingredients from the shelf';return G.t>0?'Customers are on the way…':'Serve the last customers!'}
+function hudUpdate(){const r=S.lv<5?(S.xp-LV[S.lv-1])/(LV[S.lv]-LV[S.lv-1]):1;$('#cash').textContent='💰 '+F(S.cash);$('#rep').textContent='⭐ '+Math.round(S.rep)+'/100';$('#day').textContent='DAY '+S.day+' · '+Math.max(0,Math.ceil(G.t))+'s';
+$('#lvl').innerHTML=`LEVEL ${S.lv} · ${NM[S.lv-1]} ${Math.round(r*100)}%<div class=bar><i style="width:${r*100}%"></i></div>`;$('#pf').textContent='Today '+F(G.d.rev-G.d.exp)+' · 👥'+S.served+' · 🏢1';
+$('#inv').innerHTML=Object.keys(ING).map(k=>`<span class="${S.inv[k]<=3?'lo':''}">${ING[k][0]}${S.inv[k]}</span>`).join(' ');$('#hint').textContent=hint();const s=near();$('#act').innerHTML=s?s.e+'<br>'+s.l:'GO'}
+/* ===== DRAWING ===== */
+function draw(){if(!G.c)return;const x=cx;x.setTransform(SC*dpr,0,0,SC*dpr,0,0);x.fillStyle='#24413a';x.fillRect(0,0,W,H);x.fillStyle='#bfd9cc';x.fillRect(16,32,W-32,128);
+for(let i=0;i<19;i++)for(let j=0;j<6;j++){x.fillStyle=(i+j)%2?'#f0e2bd':'#e6d5a8';x.fillRect(16+i*32,192+j*32,32,32)}
+x.fillStyle='#24413a';x.fillRect(0,H-16,288,16);x.fillRect(352,H-16,288,16);x.fillStyle='#ffc933';x.fillRect(288,H-12,64,10);
+const E=(t,px,py,s=20)=>{x.font=s+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(t,px,py)},RR=(a,b,c,d,f,r=6)=>{x.fillStyle=f;x.beginPath();x.roundRect(a,b,c,d,r);x.fill()};
+for(let i=0;i<Math.floor(G.dirt/12);i++){x.fillStyle='#8a6a3a66';x.beginPath();x.ellipse(70+(i*97)%500,240+(i*53)%100,9,5,0,0,7);x.fill()}
+const nt=2+(st('slots')>=1)+(st('slots')>=3);[[24,260],[560,260],[24,320],[560,320]].slice(0,nt).forEach(t=>{RR(t[0],t[1],56,36,'#a8743a');E('🍽️',t[0]+28,t[1]+18,18)});
+for(const s of ST){const[a,b,w,h]=s.r;RR(a,b+5,w,h,'#0006');RR(a,b,w,h,s.c);if(s.k=='ctr'){RR(a,b,w,8,'#c98b4a',3);E('🧾',572,176,18)}else{E(s.e,a+w/2,b+h/2,22);x.fillStyle='#fff';x.font='700 9px system-ui';x.fillText(s.l,a+w/2,b+h+8)}}
+if(G.ready>0)E('🍔×'+G.ready,260,90,14);if(S.staff.cook)E('👨‍🍳',165,100,20);if(S.staff.cashier)E('👩‍💼',575,140,20);if(S.staff.cleaner)E('🧹',330+Math.sin(G.el*.7)*220,330,20);
+const n=near();if(n&&!G.paused){x.strokeStyle='#ffc933';x.lineWidth=3;x.beginPath();x.roundRect(n.r[0]-2,n.r[1]-2,n.r[2]+4,n.r[3]+4,7);x.stroke()}
+if(G.cook){const sw=st('sweet'),a=.6-sw,b=.78+sw,bx=128,by=76,bw=64;RR(bx-2,by-2,bw+4,14,'#000a',4);[[0,a,'#f0a030'],[a,b,'#2fb36b'],[b,b+.07,'#c8d83a'],[b+.07,1,'#e63b2e']].forEach(z=>{x.fillStyle=z[2];x.fillRect(bx+z[0]*bw,by,(z[1]-z[0])*bw,10)});RR(bx+G.cook.p*bw-2,by-4,4,18,'#fff',2)}
+const sph=(a,b,rx,ry,c)=>{x.fillStyle=c;x.beginPath();x.ellipse(a,b,rx,ry,0,0,7);x.fill();const g=x.createRadialGradient(a-rx*.4,b-ry*.5,1,a,b,Math.max(rx,ry)*1.15);g.addColorStop(0,'#ffffff99');g.addColorStop(.5,'#ffffff00');g.addColorStop(1,'#00000066');x.fillStyle=g;x.fill();x.strokeStyle='#0004';x.lineWidth=1;x.stroke()};
+const person=(px,py,w,col,hat)=>{const sw=Math.sin(w*14),g=x.createRadialGradient(px,py+10,1,px,py+10,13);g.addColorStop(0,'#0007');g.addColorStop(1,'#0000');x.fillStyle=g;x.beginPath();x.ellipse(px,py+10,13,5,0,0,7);x.fill();
+sph(px-4,py+7+Math.max(0,sw)*2,3.5,3,'#222');sph(px+4,py+7+Math.max(0,-sw)*2,3.5,3,'#222');sph(px-10,py-1+sw*2,3,4,'#f2c29b');sph(px+10,py-1-sw*2,3,4,'#f2c29b');sph(px,py-1,9,9,col);sph(px,py-14,7.5,7.5,'#f2c29b');
+if(hat){sph(px,py-21,8,4.5,'#fff');sph(px,py-26,6,5,'#fff')}else sph(px,py-19,7.5,3.5,'#2b1d14');x.fillStyle='#222';x.fillRect(px-3.5,py-14,2,3);x.fillRect(px+1.5,py-14,2,3)};
+for(const c of G.c){person(c.x,c.y,c.wk||0,`hsl(${c.hue},60%,48%)`);E(c.st=='eat'?'😋':TY[c.ty].e,c.x,c.y-30,13);if(c.st=='eat')E('🍔',c.x,c.y+4,12);if(c.st=='wait'){RR(c.x-24,c.y-62,48,22,'#fff',8);x.fillStyle='#000';E('🍔'.repeat(c.b-c.gb)+(c.d>c.gd?'🥤':''),c.x,c.y-51,13);const f=c.pat/c.max;RR(c.x-16,c.y+14,32,5,'#0006',2);RR(c.x-16,c.y+14,32*Math.max(0,f),5,f>.5?'#2fb36b':f>.25?'#ffc933':'#e63b2e',2)}}
+const p=G.p;person(p.x,p.y,p.w,'#2f7de1',1);const hs=[G.h.kit&&'🧺',G.h.patty&&'🥩',G.h.burger&&'🍔',G.h.drink&&'🥤'].filter(Boolean);if(hs.length)E(hs.join(''),p.x,p.y-42,15);
+for(const f of G.fx){x.globalAlpha=Math.max(0,f.a);x.fillStyle=f.c;x.font='800 14px system-ui';x.textAlign='center';x.strokeStyle='#000';x.lineWidth=3;x.strokeText(f.t,f.x,f.y);x.fillText(f.t,f.x,f.y);x.globalAlpha=1}
+if(G.outT>0){x.fillStyle='#0004';x.fillRect(0,0,W,H);E('⚡ Power outage',W/2,170,16)}}
+let last=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(G.c&&!G.paused&&!matchMedia('(orientation:portrait) and (pointer:coarse)').matches)update(dt);draw();requestAnimationFrame(loop)}
+fit();title();requestAnimationFrame(loop);initCloud();
+</script></body></html>
